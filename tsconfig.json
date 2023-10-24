@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",  // Update this line
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}

@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  my-node-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    network_mode: data
+    environment:
+      DD_API_KEY: f94babb2769dcd061a0de096d4a7cb56
+      DD_APP_KEY: 223a65fb925e746c6c64c61dcffc89b765d402a6
+      DD_ENV: "teste"
+      DD_LOGS_INJECTION: true  
+      # DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL: true
+      DD_SERVICE: "test"
+      DD_APM_ENABLED: true
+      # DD_HOSTNAME: pop-os
+      # DD_AGENT_HOST: 192.168.2.50
+  
+      
+       
+  dd-agent:
+    image: public.ecr.aws/datadog/agent:7
+    container_name: dd-agent 
+    pid: host
+    network_mode: data
+    ports:
+       - "8126:8126"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    environment:
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_SITE=us5.datadoghq.com
+      - DD_APM_ENABLED=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_API_KEY=f94babb2769dcd061a0de096d4a7cb56
+      - DD_URL=us5.datadoghq.com
+      - DD_LOGS_ENABLED=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_CONTAINER_INCLUDE="image:.*"
+      - DD_CONTAINER_EXCLUDE="image:public.ecr.aws/datadog/agent"
+      - DD_CONTAINER_EXCLUDE_LOGS="image:public.ecr.aws/datadog/agent"
+      - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+      - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket 
+  # datadog-agent:
+  #   image: datadog/agent:latest
+  #   container_name: datadog-agent
+  #   environment:
+  #     DD_API_KEY: f94babb2769dcd061a0de096d4a7cb56
+  #     DD_APM_ENABLED: "true"
+  #     DD_LOGS_ENABLED: "true"
+  #     DD_SITE: us5.datadoghq.com
+  #   ports:
+  #     - "8126:8126"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - /proc/:/host/proc/:ro
+  #     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
